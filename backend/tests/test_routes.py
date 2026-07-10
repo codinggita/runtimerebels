@@ -3,10 +3,37 @@ from fastapi.testclient import TestClient
 from app.api.routes import app
 
 
+from app.core.approval import approval_manager
+
 class TestDashboardRoutes(unittest.TestCase):
 
     def setUp(self):
         self.client = TestClient(app)
+        # Seed approval queue with test values
+        approval_manager.save_queue([
+            {
+                "id": "appr_1",
+                "platform": "telegram",
+                "sender_id": "12345",
+                "sender": "Manoj",
+                "query": "NIT?",
+                "ai_reply": "i studied at NIT",
+                "confidence": 0.42,
+                "timestamp": "Just now",
+                "created_at": 1782348920
+            },
+            {
+                "id": "appr_2",
+                "platform": "gmail",
+                "sender_id": "boss@innovate.co",
+                "sender": "Boss",
+                "query": "Logs?",
+                "ai_reply": "Will send shortly",
+                "confidence": 0.35,
+                "timestamp": "1 hour ago",
+                "created_at": 1782348910
+            }
+        ])
 
     def test_get_stats(self):
         response = self.client.get("/api/stats")

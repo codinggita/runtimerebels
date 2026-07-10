@@ -42,9 +42,25 @@ def process_message_task(message_data: Dict[str, Any]):
 
     result = loop.run_until_complete(run_ai_pipeline())
     bubbles = result.get("final_response", [])
+    confidence = result.get("confidence", 1.0)
 
     if not bubbles:
         logger.warning("AI pipeline generated no bubbles. Skipping response.")
+        return
+
+    # Check for low-confidence trigger to trigger human override
+    if confidence < 0.6:
+        from app.core.approval import approval_manager
+        combined_text = " ".join(bubbles)
+        logger.info(f"Low confidence ({confidence:.2f}) intercepted. Intercepting response.")
+        approval_manager.add_to_queue(
+            platform=platform,
+            sender_id=sender_id,
+            sender_name=sender_name,
+            query=content,
+            ai_reply=combined_text,
+            confidence=confidence,
+        )
         return
 
     # Combine text to calculate typing delay

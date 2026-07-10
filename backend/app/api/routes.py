@@ -176,13 +176,18 @@ class ApprovalActionPayload(BaseModel):
     content: str
 
 
+from app.core.approval import approval_manager
+from app.services.telegram import send_message as tg_send
+from app.services.discord import send_message as ds_send
+from app.services.gmail import send_email as gm_send
+
 @app.get("/api/stats")
 async def get_dashboard_stats():
     return {
         "messages_replied": len(mock_activities),
         "avg_response_time": f"{(settings.REPLY_DELAY_MIN + settings.REPLY_DELAY_MAX) // 2}s",
         "active_platforms": active_platforms,
-        "pending_approvals": len(mock_approvals),
+        "pending_approvals": len(approval_manager.load_queue()),
         "confidence_score": "88%",
     }
 
@@ -228,49 +233,57 @@ async def toggle_platform_channel(platform: str):
 
 @app.get("/api/approvals")
 async def get_pending_approvals():
-    return mock_approvals
+    return approval_manager.load_queue()
 
 
 @app.post("/api/approvals/{id}/approve")
 async def approve_pending_reply(id: str, payload: ApprovalActionPayload):
-    global mock_approvals
-    item = next((x for x in mock_approvals if x["id"] == id), None)
+    # Remove from approvals queue
+    item = approval_manager.remove_from_queue(id)
     if not item:
-        raise HTTPException(status_code=404, detail="Approval task item not found")
+        raise HTTPException(status_code=404, detail="Approval task item not found or already processed")
 
     logger.info(
         f"Approved reply override for {id} ({item['platform']}): {payload.content}"
     )
 
-    # Simulate dispatch reply bubble to services in background
-    # Real pipeline will forward this payload directly
+    # Dispatch to appropriate channel service client
+    platform = item.get("platform")
+    sender_id = item.get("sender_id")
+
+    try:
+        if platform == "telegram":
+            await tg_send(sender_id, payload.content)
+        elif platform == "discord":
+            await ds_send(sender_id, payload.content)
+        elif platform == "gmail":
+            subject = "Re: Digital Twin Autopilot"
+            await gm_send(sender_id, subject, payload.content)
+    except Exception as e:
+        logger.error(f"Failed to dispatch approved response to {platform}: {e}")
+
+    # Append to recent activity feed
     mock_activities.insert(
         0,
         {
             "id": len(mock_activities) + 1,
-            "platform": item["platform"],
-            "sender": item["sender"],
-            "query": item["query"],
+            "platform": platform,
+            "sender": item.get("sender"),
+            "query": item.get("query"),
             "reply": payload.content,
             "verified": False,
             "timestamp": "Just now",
         },
     )
 
-    # Remove from approvals
-    mock_approvals = [x for x in mock_approvals if x["id"] != id]
     return {"status": "approved", "dispatched": payload.content}
 
 
 @app.post("/api/approvals/{id}/reject")
 async def reject_pending_reply(id: str):
-    global mock_approvals
-    item = next((x for x in mock_approvals if x["id"] == id), None)
+    item = approval_manager.remove_from_queue(id)
     if not item:
-        raise HTTPException(status_code=404, detail="Approval task item not found")
+        raise HTTPException(status_code=404, detail="Approval task item not found or already processed")
 
     logger.info(f"Rejected and discarded autopilot reply for {id}")
-
-    # Remove from approvals
-    mock_approvals = [x for x in mock_approvals if x["id"] != id]
     return {"status": "rejected"}
