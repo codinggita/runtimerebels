@@ -1,26 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  /* BMW Design System Variables */
+  --bmw-blue: #1c69d4;
+  --bmw-blue-active: #0653b6;
+  --bmw-blue-disabled: #d6d6d6;
+  
+  --bmw-ink: #262626;
+  --bmw-body: #3c3c3c;
+  --bmw-body-strong: #1a1a1a;
+  --bmw-muted: #6b6b6b;
+  --bmw-muted-soft: #9a9a9a;
+  
+  --bmw-hairline: #e6e6e6;
+  --bmw-hairline-strong: #cccccc;
+  
+  --bmw-canvas: #ffffff;
+  --bmw-surface-soft: #f7f7f7;
+  --bmw-surface-card: #fafafa;
+  --bmw-surface-strong: #ebebeb;
+  
+  --bmw-dark: #1a2129;
+  --bmw-dark-elevated: #262e38;
+  --bmw-on-primary: #ffffff;
+  --bmw-on-dark: #ffffff;
+  --bmw-on-dark-soft: #bbbbbb;
+  
+  --bmw-success: #22c55e;
+  --bmw-warning: #f59e0b;
+  --bmw-error: #dc2626;
+
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: dark;
-  color: #e2e8f0;
-  background-color: #0b0f19;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-weight: 300;
+  color: var(--bmw-body);
+  background-color: var(--bmw-canvas);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #090d16 80%);
-  background-attachment: fixed;
-  overflow-x: hidden;
+  background-color: var(--bmw-canvas);
 }
 
 /* Custom Scrollbar */
@@ -29,102 +49,158 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bmw-surface-soft);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: var(--bmw-hairline-strong);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--bmw-muted);
 }
 
-/* Glassmorphism Classes */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.45);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-.glass-panel-glow {
-  position: relative;
-}
-.glass-panel-glow::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 16px;
-  padding: 1px;
-  background: linear-gradient(to bottom right, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.05), transparent);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-
-.glass-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: #fff;
-  outline: none;
-  transition: all 0.3s ease;
-}
-.glass-input:focus {
-  border-color: rgba(99, 102, 241, 0.6);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
-}
-
-/* Gradients & Animations */
-.text-gradient {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.gradient-btn {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  border: none;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
-}
-.gradient-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
-  filter: brightness(1.1);
-}
-.gradient-btn:active {
-  transform: translateY(1px);
-}
-
-.status-badge {
-  display: inline-flex;
+/* Layout Framework Classes */
+.bmw-navbar {
+  background-color: var(--bmw-canvas);
+  border-bottom: 1px solid var(--bmw-hairline);
+  height: 70px;
+  display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
-.status-active {
-  background: rgba(16, 185, 129, 0.1);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+
+.bmw-sidebar {
+  background-color: var(--bmw-surface-soft);
+  border-right: 1px solid var(--bmw-hairline);
+  width: 250px;
+  height: calc(100vh - 70px);
+  position: fixed;
+  top: 70px;
+  left: 0;
+  padding: 32px 16px;
+  box-sizing: border-box;
 }
-.status-inactive {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+
+.bmw-main-container {
+  margin-left: 250px;
+  padding: 40px;
+  min-height: calc(100vh - 70px);
+  box-sizing: border-box;
+  background-color: var(--bmw-canvas);
 }
-.status-pending {
-  background: rgba(245, 158, 11, 0.1);
-  color: #fbbf24;
-  border: 1px solid rgba(245, 158, 11, 0.2);
+
+/* Cards & Panel Styling */
+.bmw-card {
+  background-color: var(--bmw-surface-card);
+  border: 1px solid var(--bmw-hairline);
+  border-radius: 0; /* BMW typically uses sharp corners */
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: border-color 0.2s ease;
+}
+.bmw-card:hover {
+  border-color: var(--bmw-hairline-strong);
+}
+
+.bmw-card-dark {
+  background-color: var(--bmw-dark);
+  color: var(--bmw-on-dark);
+  padding: 24px;
+  border-radius: 0;
+  margin-bottom: 24px;
+}
+
+/* Buttons */
+.bmw-btn-primary {
+  background-color: var(--bmw-blue);
+  color: var(--bmw-on-primary);
+  border: none;
+  border-radius: 0;
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.bmw-btn-primary:hover {
+  background-color: var(--bmw-blue-active);
+}
+.bmw-btn-primary:disabled {
+  background-color: var(--bmw-blue-disabled);
+  cursor: not-allowed;
+}
+
+.bmw-btn-secondary {
+  background-color: transparent;
+  color: var(--bmw-ink);
+  border: 1px solid var(--bmw-hairline-strong);
+  border-radius: 0;
+  padding: 11px 24px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.bmw-btn-secondary:hover {
+  background-color: var(--bmw-surface-soft);
+  border-color: var(--bmw-ink);
+}
+
+/* Inputs */
+.bmw-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--bmw-canvas);
+  border: 1px solid var(--bmw-hairline-strong);
+  border-radius: 0;
+  padding: 12px 16px;
+  color: var(--bmw-ink);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.bmw-input:focus {
+  border-color: var(--bmw-blue);
+}
+
+/* Typography styles matching DESIGN-bmw.md */
+.bmw-display-sm {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--bmw-ink);
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.bmw-body-md {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--bmw-body);
+}
+
+.bmw-body-sm {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--bmw-muted);
+}
+
+.bmw-label-uppercase {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--bmw-ink);
 }
