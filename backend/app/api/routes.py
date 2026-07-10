@@ -108,11 +108,11 @@ def save_user_config(config_data: Dict[str, Any]):
 import asyncio
 from app.services.discord import bot_client
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # App startup logic
-    logger.info("Starting Digital Twin Autopilot Backend...")
+    logger.info("Starting Digital Twin Autopilot Backend with MongoDB...")
+
     discord_task = None
     if settings.DISCORD_BOT_TOKEN:
         logger.info("Starting Discord bot client...")
@@ -146,9 +146,11 @@ app.add_middleware(
 # Include webhook routers
 from app.api.webhooks.telegram import router as telegram_router
 from app.api.webhooks.email import router as email_router
+from app.api.auth import router as auth_router
 
 app.include_router(telegram_router, prefix="/webhook")
 app.include_router(email_router, prefix="/webhook")
+app.include_router(auth_router, prefix="/api/auth", tags=["auth"])
 
 
 @app.get("/health")

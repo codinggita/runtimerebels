@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Bot, Zap, ShieldCheck, ArrowRight, MessageSquare, Mail, MessageCircle } from "lucide-react";
-
+import Navbar from "../components/layout/Navbar";
+import Footer from "../components/layout/Footer";
 export default function Landing() {
   const navigate = useNavigate();
 
@@ -12,37 +13,17 @@ export default function Landing() {
       color: "var(--bmw-ink)",
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: "60px 24px",
       boxSizing: "border-box"
     }}>
-      {/* Brand Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "40px" }}>
-        <div style={{
-          width: "44px",
-          height: "44px",
-          borderRadius: "50%",
-          border: "2px solid var(--bmw-blue)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "var(--bmw-blue)",
-          fontWeight: "800",
-          fontSize: "20px",
-        }}>
-          D
-        </div>
-        <div>
-          <span className="bmw-label-uppercase" style={{ fontSize: "18px", letterSpacing: "2.5px" }}>
-            DIGITAL TWIN
-          </span>
-          <span style={{ fontSize: "18px", fontWeight: "300", color: "var(--bmw-muted)", marginLeft: "8px" }}>
-            | Autopilot
-          </span>
-        </div>
-      </div>
-
+      <Navbar />
+      
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        padding: "60px 24px",
+        flexGrow: 1
+      }}>
       {/* Main Hero Container */}
       <div style={{ 
         maxWidth: "960px", 
@@ -176,18 +157,8 @@ export default function Landing() {
         ))}
       </div>
 
-      {/* Footer */}
-      <footer style={{ 
-        width: "100%", 
-        textAlign: "center", 
-        borderTop: "1px solid var(--bmw-hairline)", 
-        paddingTop: "24px", 
-        marginTop: "40px" 
-      }}>
-        <p className="bmw-body-sm" style={{ margin: 0 }}>
-          © 2026 Digital Twin Autopilot. Built with corporate BMW design styling.
-        </p>
-      </footer>
+      </div>
+      <Footer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
 import Papa from "papaparse";
 import { ArrowLeft, ArrowRight, UploadCloud, CheckCircle, AlertCircle, Trash2, MessageSquare } from "lucide-react";
+import Footer from "../components/layout/Footer";
 
 export default function Upload() {
   const navigate = useNavigate();
@@ -391,6 +392,7 @@ export default function Upload() {
         </div>
 
       </div>
+      <Footer />
     </div>
   );
 }
