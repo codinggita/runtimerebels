@@ -49,7 +49,10 @@ app.add_middleware(
 
 # Include webhook routers
 from app.api.webhooks.telegram import router as telegram_router
+from app.api.webhooks.email import router as email_router
+
 app.include_router(telegram_router, prefix="/webhook")
+app.include_router(email_router, prefix="/webhook")
 
 
 @app.get("/health")
