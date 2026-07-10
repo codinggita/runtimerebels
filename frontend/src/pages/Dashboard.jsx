@@ -5,16 +5,17 @@ import {
   CheckCircle,
   AlertCircle,
   Clock,
-  Sliders,
   Activity,
   RefreshCw,
 } from "lucide-react";
 import { api } from "../lib/api";
 import MasterToggle from "../components/dashboard/MasterToggle";
 import PlatformToggles from "../components/dashboard/PlatformToggles";
+import ActivityFeed from "../components/dashboard/ActivityFeed";
 
 export default function Dashboard() {
   const [isMasterOn, setIsMasterOn] = useState(true);
+  const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState({
     messages_replied: 24,
     avg_response_time: "42s",
@@ -35,11 +36,43 @@ export default function Dashboard() {
     try {
       const statsData = await api.getStats();
       const configData = await api.getConfig();
+      const activityData = await api.getActivity();
 
       setStats(statsData);
       setConfig(configData);
+      setActivities(activityData);
     } catch (err) {
-      console.warn("Failed fetching dashboard data from backend server.");
+      console.warn("Failed fetching dashboard data from backend server. Using mock presentation data.");
+      // Load mock items for showcase
+      setActivities([
+        {
+          id: 1,
+          platform: "telegram",
+          sender: "Ananya",
+          query: "Bro are you free tonight?",
+          reply: "yeah probably, just chilling at home. what's up?",
+          verified: true,
+          timestamp: "Just now",
+        },
+        {
+          id: 2,
+          platform: "discord",
+          sender: "CodeRebel_9",
+          query: "Hey did you run the latest migration?",
+          reply: "idk about that one, ask the sysops lead",
+          verified: false,
+          timestamp: "5 mins ago",
+        },
+        {
+          id: 3,
+          platform: "gmail",
+          sender: "hiring@innovate.co",
+          query: "Hello, we reviewed your autopilot profile and wanted to follow up.",
+          reply: "Dear sender,\n\nThank you for reaching out. I appreciate the follow-up.\n\nBest regards,",
+          verified: true,
+          timestamp: "20 mins ago",
+        },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -206,7 +239,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Settings Body */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "24px", marginBottom: "32px" }}>
         {/* Left Col: Platform Toggles */}
         <PlatformToggles
           activePlatforms={stats.active_platforms}
@@ -284,6 +317,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Bottom section: Activity Feed */}
+      <ActivityFeed activities={activities} />
     </div>
   );
 }
