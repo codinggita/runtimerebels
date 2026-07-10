@@ -1,0 +1,46 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: twin_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - twin_network
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: twin_qdrant
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - twin_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: twin_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - qdrant
+    networks:
+      - twin_network
+
+networks:
+  twin_network:
+    driver: bridge
+
+volumes:
+  qdrant_data:
