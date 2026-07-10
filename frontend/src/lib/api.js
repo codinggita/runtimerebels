@@ -48,4 +48,11 @@ export const api = {
       method: "POST",
       body: JSON.stringify(config),
     }),
+
+  // Arena Comparisons
+  comparePrompt: (prompt) =>
+    request("/compare", {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+    }),
 };

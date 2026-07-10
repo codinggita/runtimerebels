@@ -80,6 +80,21 @@ class TestDashboardRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "rejected")
 
+    from unittest.mock import patch, MagicMock
+
+    @patch("app.api.routes.call_llm")
+    @patch("app.api.routes.graph.ainvoke")
+    def test_compare_endpoint(self, mock_ainvoke, mock_call_llm):
+        mock_call_llm.return_value = "This is a generic LLM helpful response."
+        mock_ainvoke.return_value = {"final_response": ["tbh kind of custom response", "lol"]}
+
+        payload = {"prompt": "What do you think of coding?"}
+        response = self.client.post("/api/compare", json=payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["chatgpt"], "This is a generic LLM helpful response.")
+        self.assertEqual(data["clone"], "tbh kind of custom response lol")
+
 
 if __name__ == "__main__":
     unittest.main()
